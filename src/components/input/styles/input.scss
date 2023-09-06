@@ -1,0 +1,26 @@
+.input {
+  position: relative;
+
+  svg {
+    cursor: pointer;
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    top: 50%;
+    left: 10px;
+    transform: translate3d(0, -50%, 0) rotate(180deg);
+    fill: #000;
+    transition: all var(--base-transition);
+
+    &.open {
+      transform: translate3d(0, -50%, 0) rotate(0);
+      fill: gray;
+    }
+  }
+}
+
+input[type="text"] {
+  padding: 10px 15px 10px 40px;
+  color: #000;
+  border: none;
+}
