@@ -1,0 +1,18 @@
+.todos-list-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  border-bottom: 1px solid gray;
+  user-select: none;
+}
+
+input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+
+  &:checked + span {
+    text-decoration: line-through;
+  }
+}

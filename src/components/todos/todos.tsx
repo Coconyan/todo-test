@@ -1,35 +1,50 @@
 import { useReducer, useRef, useState } from 'react';
 import './styles/todos.scss';
 import Input from '../input/input';
+import { Todo } from '../../types/todo';
+import TodosList from '../todos-list/todos-list';
+import { nanoid } from 'nanoid';
 
 enum TodosActions {
   Add = "addTodo",
-  Change = "changeTodo",
+  Edit = "editTodo",
   Clear = "clearTodos"
-}
-
-type Todo = {
-  id: number
-  description: string
-  isCompleted: boolean
-}
+};
 
 type State = {
   todos: Todo[]
-}
+};
 
 const initialTasks: State = {
   todos: [],
-}
+};
 
 const tasksReducer = (
   state: State,
-  action: { type: string; payload: Todo; }
+  action: { type: string; payload?: Todo; }
 ): State => {
   switch (action.type) {
     case TodosActions.Add:
-      let newTodos = [...state.todos, action.payload];
-      return { ...state, todos: newTodos };
+      if (action.payload) {
+        return { todos: [...state.todos, action.payload] }
+      }
+      return { todos: state.todos }
+    case TodosActions.Edit:
+      if (action.payload) {
+        return {
+          todos: state.todos.map((todo) => {
+            if (todo.id === action.payload?.id) {
+              return action.payload
+            }
+            return todo
+          })
+        }
+      };
+      return { todos: state.todos }
+    case TodosActions.Clear:
+      return {
+        todos: state.todos.filter((todo) => !todo.isCompleted)
+      }
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
   }
@@ -43,14 +58,14 @@ function Todos() {
     initialTasks
   );
 
-  const handleAddTask = (e: React.SyntheticEvent) => {
+  const handleAddTask = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (inputRef.current) {
+    if (inputRef.current?.value) {
       dispatch({
         type: TodosActions.Add,
         payload: {
-          id: tasks.todos.length + 1,
+          id: nanoid(),
           description: inputRef.current.value,
           isCompleted: false,
         },
@@ -59,7 +74,18 @@ function Todos() {
     }
   }
 
-  console.log(tasks.todos)
+  const handleEditTask = (task: Todo) => {
+    dispatch({
+      type: TodosActions.Edit,
+      payload: task
+    })
+  };
+
+  const handleClearCompletedTasks = () => {
+    dispatch({
+      type: TodosActions.Clear
+    })
+  };
 
   return (
     <div className="todos">
@@ -73,16 +99,13 @@ function Todos() {
           setIsOpen={setIsOpen}
           placeholder="What needs to be done"
         />
+        {
+          Boolean(isOpen) &&
+          <TodosList tasks={tasks.todos} handleEditTask={handleEditTask} />
+        }
       </form>
-      {
-        Boolean(isOpen) &&
-        <ul>
-          {tasks.todos.map((task) =>
-            <li key={task.id}>{task.description}</li>
-          )}
-        </ul>
-      }
-
+      {tasks.todos.filter((todo) => todo.isCompleted).length} completed
+      <button onClick={handleClearCompletedTasks}>Clear completed tasks</button>
     </div>
   );
 }
