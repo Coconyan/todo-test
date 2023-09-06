@@ -2,8 +2,7 @@ import './styles/input.scss';
 import { ReactComponent as ArrowDown } from '../../assets/down-arrow.svg';
 
 type PropsType = {
-  value: string,
-  setValue: React.Dispatch<React.SetStateAction<string>>,
+  inputRef: React.RefObject<HTMLInputElement>,
   isOpen: boolean,
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
   placeholder?: string,
@@ -12,8 +11,7 @@ type PropsType = {
 
 function Input(props: PropsType) {
   const {
-    value,
-    setValue,
+    inputRef,
     placeholder,
     type = "text",
     isOpen,
@@ -24,9 +22,8 @@ function Input(props: PropsType) {
     <div className="input">
       <ArrowDown className={isOpen ? "open" : ""} onClick={() => setIsOpen((prev) => !prev)} />
       <input
+        ref={inputRef}
         type={type}
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
         placeholder={placeholder}
       />
     </div>

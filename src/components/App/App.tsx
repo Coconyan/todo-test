@@ -5,7 +5,7 @@ function App() {
   return (
     <div className="app">
       <header className="header">
-        <h1>Todos</h1>
+        <h1 style={{marginBottom: "30px"}}>Todos</h1>
       </header>
       <main>
         <Todos />
