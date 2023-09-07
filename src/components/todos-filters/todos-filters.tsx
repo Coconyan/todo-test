@@ -2,7 +2,7 @@ import {
   Todo,
   TodosFiltersEnum
 } from '../../types/todo';
-import { getFilteredTodos } from '../../utils/getFilteredTodos';
+import { getFilteredTodos } from '../../utils/get-filtered-todos';
 import './styles/todos-filters.scss';
 
 type PropsType = {
@@ -31,13 +31,14 @@ function TodosFilters(props: PropsType) {
           key={TodosFiltersEnum[key]}
           className={filter === key ? 'active' : ''}
           onClick={() => handleEditFilter(TodosFiltersEnum[key])}
+          data-testid={TodosFiltersEnum[key]}
         >
           {TodosFiltersEnum[key]}
         </p>
         )}
       </div>
       <div className="todos-filters__clear">
-        <p onClick={handleClearCompletedTasks}>Clear completed</p>
+        <p onClick={handleClearCompletedTasks} data-testid="clear-completed">Clear completed</p>
       </div>
     </div>
   );

@@ -20,8 +20,13 @@ function Input(props: PropsType) {
 
   return (
     <div className="input">
-      <ArrowDown className={isOpen ? "open" : ""} onClick={() => setIsOpen((prev) => !prev)} />
+      <ArrowDown
+        data-testid="svg-list-open"
+        className={isOpen ? "open" : ""}
+        onClick={() => setIsOpen((prev) => !prev)}
+      />
       <input
+        data-testid="input"
         ref={inputRef}
         type={type}
         placeholder={placeholder}

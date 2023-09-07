@@ -12,8 +12,7 @@ import {
   TodosFiltersEnum
 } from '../../types/todo';
 import TodosList from '../todos-list/todos-list';
-import { nanoid } from 'nanoid';
-import { getFilteredTodos } from '../../utils/getFilteredTodos';
+import { getFilteredTodos } from '../../utils/get-filtered-todos';
 import TodosFilters from '../todos-filters/todos-filters';
 
 const initialTasks: TodoState = {
@@ -87,7 +86,7 @@ function Todos() {
       dispatch({
         type: TodosActions.Add,
         payload: {
-          id: nanoid(),
+          id: (Math.random() + tasks.todos.length + 1).toString(),
           description: inputRef.current.value,
           isCompleted: false,
         },
