@@ -19,6 +19,7 @@ function TodosListItem(props: PropsType) {
           type="checkbox"
           id={task.id.toString()}
           onChange={(e) => handleEditTask({id: task.id, description: task.description, isCompleted: e.target.checked})}
+          defaultChecked={task.isCompleted}
         />
         <span>{task.description}</span>
       </label>

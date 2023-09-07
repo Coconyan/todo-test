@@ -1,0 +1,24 @@
+.todos-filters {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+
+  &__nav p,
+  &__clear p {
+    user-select: none;
+    cursor: pointer;
+  }
+
+  &__nav {
+    display: flex;
+
+    p {
+      padding: 5px;
+      border-radius: 4px;
+      &.active {
+        border: 1px solid pink;
+      }
+    }
+  }
+}

@@ -1,6 +1,7 @@
 .input {
   position: relative;
   border-bottom: 1px solid gray;
+  width: 100%;
 
   svg {
     cursor: pointer;
@@ -24,4 +25,5 @@ input[type="text"] {
   padding: 10px 15px 10px 40px;
   color: #000;
   border: none;
+  width: 100%;
 }

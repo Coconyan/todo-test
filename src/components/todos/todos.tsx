@@ -1,49 +1,71 @@
-import { useReducer, useRef, useState } from 'react';
+import {
+  useReducer,
+  useRef,
+  useState
+} from 'react';
 import './styles/todos.scss';
 import Input from '../input/input';
-import { Todo } from '../../types/todo';
+import {
+  TodoState,
+  Todo,
+  TodosActions,
+  TodosFiltersEnum
+} from '../../types/todo';
 import TodosList from '../todos-list/todos-list';
 import { nanoid } from 'nanoid';
+import { getFilteredTodos } from '../../utils/getFilteredTodos';
+import TodosFilters from '../todos-filters/todos-filters';
 
-enum TodosActions {
-  Add = "addTodo",
-  Edit = "editTodo",
-  Clear = "clearTodos"
-};
-
-type State = {
-  todos: Todo[]
-};
-
-const initialTasks: State = {
+const initialTasks: TodoState = {
   todos: [],
+  filteredTodos: [],
+  filter: TodosFiltersEnum.All
 };
 
 const tasksReducer = (
-  state: State,
-  action: { type: string; payload?: Todo; }
-): State => {
+  state: TodoState,
+  action: { type: string; payload?: Todo | TodosFiltersEnum; }
+): TodoState => {
   switch (action.type) {
     case TodosActions.Add:
       if (action.payload) {
-        return { todos: [...state.todos, action.payload] }
+        const todosWithNew = [...state.todos, action.payload as Todo];
+        return {
+          ...state,
+          todos: todosWithNew,
+          filteredTodos: getFilteredTodos(state.filter, todosWithNew)
+        }
       }
-      return { todos: state.todos }
+      return { ...state }
     case TodosActions.Edit:
       if (action.payload) {
+        const editPayload = action.payload as Todo;
+        const todosWithEdited = state.todos.map((todo) => {
+          if (todo.id === editPayload?.id) {
+            return action.payload as Todo
+          }
+          return todo
+        });
+
         return {
-          todos: state.todos.map((todo) => {
-            if (todo.id === action.payload?.id) {
-              return action.payload
-            }
-            return todo
-          })
+          ...state,
+          todos: todosWithEdited,
+          filteredTodos: getFilteredTodos(state.filter, todosWithEdited)
         }
       };
-      return { todos: state.todos }
+      return { ...state }
     case TodosActions.Clear:
+      const onlyActiveTodos = getFilteredTodos(TodosFiltersEnum.Active, state.todos);
       return {
-        todos: state.todos.filter((todo) => !todo.isCompleted)
+        ...state,
+        todos: onlyActiveTodos,
+        filteredTodos: getFilteredTodos(state.filter, onlyActiveTodos)
+      }
+    case TodosActions.EditFilter:
+      return {
+        ...state,
+        filter: action.payload as TodosFiltersEnum,
+        filteredTodos: getFilteredTodos(action.payload as TodosFiltersEnum, state.todos)
       }
     default:
       throw new Error(`Unhandled action type: ${action.type}`);
@@ -87,6 +109,13 @@ function Todos() {
     })
   };
 
+  const handleEditFilter = (filter: TodosFiltersEnum) => {
+    dispatch({
+      type: TodosActions.EditFilter,
+      payload: filter
+    })
+  }
+
   return (
     <div className="todos">
       <form
@@ -101,11 +130,15 @@ function Todos() {
         />
         {
           Boolean(isOpen) &&
-          <TodosList tasks={tasks.todos} handleEditTask={handleEditTask} />
+          <TodosList tasks={tasks.filteredTodos} handleEditTask={handleEditTask} />
         }
       </form>
-      {tasks.todos.filter((todo) => todo.isCompleted).length} completed
-      <button onClick={handleClearCompletedTasks}>Clear completed tasks</button>
+      <TodosFilters
+        tasks={tasks.todos}
+        filter={tasks.filter}
+        handleEditFilter={handleEditFilter}
+        handleClearCompletedTasks={handleClearCompletedTasks}
+      />
     </div>
   );
 }
